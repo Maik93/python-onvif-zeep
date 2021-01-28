@@ -1,7 +1,8 @@
 from onvif import ONVIFCamera
 
+
 def rotate_image_180():
-    ''' Rotate the image '''
+    """ Rotate the image """
 
     # Create the media service
     mycam = ONVIFCamera('192.168.0.112', 80, 'admin', '12345')
@@ -30,6 +31,7 @@ def rotate_image_180():
 
     # Set the video source configuration
     media_service.SetVideoSourceConfiguration(request)
+
 
 if __name__ == '__main__':
     rotate_image_180()
