@@ -25,10 +25,12 @@ class Camera:
         ptz_configuration_options = self.ptz.GetConfigurationOptions(request)
 
         # Get velocity range of pan and tilt
-        self.vx_max = ptz_configuration_options.Spaces.ContinuousPanTiltVelocitySpace[0].XRange.Max
-        self.vx_min = ptz_configuration_options.Spaces.ContinuousPanTiltVelocitySpace[0].XRange.Min
-        self.vy_max = ptz_configuration_options.Spaces.ContinuousPanTiltVelocitySpace[0].YRange.Max / 5
-        self.vy_min = ptz_configuration_options.Spaces.ContinuousPanTiltVelocitySpace[0].YRange.Min / 5
+        self.vx_max = ptz_configuration_options.Spaces.ContinuousPanTiltVelocitySpace[0].XRange.Max / 5
+        self.vx_min = ptz_configuration_options.Spaces.ContinuousPanTiltVelocitySpace[0].XRange.Min / 5
+        self.vy_max = ptz_configuration_options.Spaces.ContinuousPanTiltVelocitySpace[0].YRange.Max / 10
+        self.vy_min = ptz_configuration_options.Spaces.ContinuousPanTiltVelocitySpace[0].YRange.Min / 10
+        self.vz_max = ptz_configuration_options.Spaces.ContinuousZoomVelocitySpace[0].XRange.Max / 5
+        self.vz_min = ptz_configuration_options.Spaces.ContinuousZoomVelocitySpace[0].XRange.Min / 5
 
         # Construct request template
         self.base_request = self.ptz.create_type('ContinuousMove')
@@ -40,6 +42,18 @@ class Camera:
             self.ptz.Stop({'ProfileToken': request.ProfileToken})
         self.active = True
         self.ptz.ContinuousMove(request)
+
+    def zoom_in(self):
+        print('zoom in...')
+        request = self.base_request
+        self.base_request.Velocity = {'Zoom': {'x': self.vz_max}}
+        self.do_move(request)
+
+    def zoom_out(self):
+        print('zoom out...')
+        request = self.base_request
+        self.base_request.Velocity = {'Zoom': {'x': self.vz_min}}
+        self.do_move(request)
 
     def move_up(self):
         print('move up...')
@@ -118,6 +132,10 @@ def read_loop_cycle():
             camera_handler.move_down_left()
         elif lov[0].lower() in ["dr"]:
             camera_handler.move_down_right()
+        elif lov[0].lower() in ["z"]:
+            camera_handler.zoom_in()
+        elif lov[0].lower() in ["x"]:
+            camera_handler.zoom_out()
         elif lov[0].lower() in ["s", "st", "sto", "stop"]:
             camera_handler.stop()
         else:
