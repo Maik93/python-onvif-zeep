@@ -1,10 +1,15 @@
 import os
+import sys
+import yaml
 from onvif import ONVIFCamera
 
-IP = "192.168.0.100"  # Camera IP address
-PORT = 8000  # Port
-USER = "admin"  # Username
-PASS = "admin"  # Password
+script_path = os.path.dirname(sys.argv[0])
+with open(os.path.join(script_path, "credentials.yaml")) as f:
+    credentials = yaml.full_load(f)
+    IP = credentials['ip']
+    ONVIF_PORT = credentials['onvif_port']
+    USER = credentials['user']
+    PASS = credentials['password']
 WSDL = os.path.join(os.path.dirname(os.path.dirname(__file__)), "wsdl")
 
 """
@@ -15,7 +20,7 @@ configuration entity which has been already added to the media profile.
 """
 
 # Create the media service
-my_cam = ONVIFCamera(IP, PORT, USER, PASS)  # , WSDL)
+my_cam = ONVIFCamera(IP, ONVIF_PORT, USER, PASS)  # , WSDL)
 media_service = my_cam.create_media_service()
 
 profiles = media_service.GetProfiles()

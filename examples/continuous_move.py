@@ -1,20 +1,25 @@
 import os
 import sys
 import asyncio
+import yaml
 from onvif import ONVIFCamera
 
 
 class Camera:
-    IP = "192.168.0.100"  # Camera IP address
-    PORT = 8000  # Port
-    USER = "admin"  # Username
-    PASS = "password"  # Password
-    WSDL = os.path.join(os.path.dirname(os.path.dirname(__file__)), "..", "wsdl")
 
     def __init__(self):
+        script_path = os.path.dirname(sys.argv[0])
+        with open(os.path.join(script_path, "credentials.yaml")) as f:
+            credentials = yaml.full_load(f)
+            self.IP = credentials['ip']
+            self.ONVIF_PORT = credentials['onvif_port']
+            self.USER = credentials['user']
+            self.PASS = credentials['password']
+        self.WSDL = os.path.join(script_path, "..", "wsdl")
+
         self.active = False
 
-        onvif_camera = ONVIFCamera(self.IP, self.PORT, self.USER, self.PASS, self.WSDL)
+        onvif_camera = ONVIFCamera(self.IP, self.ONVIF_PORT, self.USER, self.PASS, self.WSDL)
         self.ptz = onvif_camera.create_ptz_service()
         media = onvif_camera.create_media_service()
         media_profile = media.GetProfiles()[0]
