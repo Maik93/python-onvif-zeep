@@ -114,53 +114,46 @@ class Camera:
 
 
 def read_loop_cycle():
-    """ Reading from stdin and displaying menu """
+    print("Your command: ", end='', flush=True)
 
     selection = sys.stdin.readline().strip("\n")
-    lov = [x for x in selection.split(" ") if x != ""]
-    if lov:
-        if lov[0].lower() in ["u", "up"]:
+    cmd_in = [x for x in selection.split(" ") if x != ""][0].lower()
+    if cmd_in:
+        if cmd_in in ["u", "up"]:
             camera_handler.move_up()
-        elif lov[0].lower() in ["d", "do", "dow", "down"]:
+        elif cmd_in in ["d", "do", "dow", "down"]:
             camera_handler.move_down()
-        elif lov[0].lower() in ["l", "le", "lef", "left"]:
+        elif cmd_in in ["l", "le", "lef", "left"]:
             camera_handler.move_left()
-        elif lov[0].lower() in ["l", "le", "lef", "left"]:
+        elif cmd_in in ["l", "le", "lef", "left"]:
             camera_handler.move_left()
-        elif lov[0].lower() in ["r", "ri", "rig", "righ", "right"]:
+        elif cmd_in in ["r", "ri", "rig", "righ", "right"]:
             camera_handler.move_right()
-        elif lov[0].lower() in ["ul"]:
+        elif cmd_in in ["ul"]:
             camera_handler.move_up_left()
-        elif lov[0].lower() in ["ur"]:
+        elif cmd_in in ["ur"]:
             camera_handler.move_up_right()
-        elif lov[0].lower() in ["dl"]:
+        elif cmd_in in ["dl"]:
             camera_handler.move_down_left()
-        elif lov[0].lower() in ["dr"]:
+        elif cmd_in in ["dr"]:
             camera_handler.move_down_right()
-        elif lov[0].lower() in ["z"]:
+        elif cmd_in in ["z"]:
             camera_handler.zoom_in()
-        elif lov[0].lower() in ["x"]:
+        elif cmd_in in ["x"]:
             camera_handler.zoom_out()
-        elif lov[0].lower() in ["s", "st", "sto", "stop"]:
+        elif cmd_in in ["s", "st", "sto", "stop"]:
             camera_handler.stop()
+        elif cmd_in == "q":
+            exit(0)
         else:
-            print("What are you asking?\tI only know, 'up','down','left','right', 'ul' (up left), \n" +
-                  "'ur' (up right), 'dl' (down left), 'dr' (down right) and 'stop'")
+            print("What are you asking for?\tI only know, 'up','down','left','right', 'ul' (up left), \n" +
+                  "'ur' (up right), 'dl' (down left), 'dr' (down right) and 'stop'. 'q' to exit.")
 
     print("")
-    print("Your command: ", end='', flush=True)
 
 
 if __name__ == '__main__':
     camera_handler = Camera()
-    loop = asyncio.get_event_loop()
-    try:
-        loop.add_reader(sys.stdin, read_loop_cycle)
-        print("Use Ctrl-C to quit")
-        print("Your command: ", end='', flush=True)
-        loop.run_forever()
-    except:
-        pass
-    finally:
-        loop.remove_reader(sys.stdin)
-        loop.close()
+
+    while True:
+        read_loop_cycle()
